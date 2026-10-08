@@ -1,0 +1,91 @@
+import os
+import time
+
+os.system('')  
+
+RED = '\u001b[41m'
+GREEN = '\u001b[42m'
+WHITE = '\u001b[47m'
+END = '\u001b[0m'
+UP10 = '\u001b[10A'      
+CLEAR_DOWN = '\u001b[0J' 
+HIDE = '\u001b[?25l'     
+SHOW = '\u001b[?25h'     
+
+CLEAR = 'cls'   
+
+# ---------- 1. Флаг Швейцарии ----------
+for i in range(7):
+    if i == 0 or i == 6:
+        print(f'{RED}{"  " * 7}{END}')
+    elif i == 1 or i == 5:
+        print(f'{RED}{"  " * 2}{WHITE}{"  " * 3}{RED}{"  " * 2}{END}')
+    else:
+        print(f'{RED}{"  " * 1}{WHITE}{"  " * 5}{RED}{"  " * 1}{END}')
+
+input('\nEnter - дальше')
+os.system(CLEAR)
+
+# ---------- 2. Узор: два соприкасающихся кольца ----------
+ring = ['  ####  ',
+        ' ##  ## ',
+        '##    ##',
+        ' ##  ## ',
+        '  ####  ']
+
+for k in range(2):               
+    for row in ring:
+        print((row + row) * 3)   
+
+input('\nEnter - дальше')
+
+# ---------- 3. Анимация: график y = x / 3 (4 кадра) ----------
+limits = [-6, -1, 4, 9]          # до какого x нарисован график в каждом кадре
+
+os.system(CLEAR)                 # очищаем консоль перед анимацией
+print(HIDE, end='')              # прячем курсор, чтобы не мигал
+
+for limit in limits:
+    print(f'y = x / 3, рисуем до x = {limit}\n')
+    for y in range(3, -4, -1):
+        line = f'{y}\t'
+        for x in range(-9, 10):
+            if x <= limit and abs(x / 3 - y) < 0.5:
+                line += '!!!'
+            else:
+                line += '---'
+        print(line)
+    line = '\t'
+    for x in range(-9, 10):
+        line += f'{x:<3}'        # подпись шириной 3 символа, как и клетка
+    print(line)
+    time.sleep(1)
+    if limit != limits[-1]:
+        print(UP10 + CLEAR_DOWN, end='')   # вернуться наверх и стереть кадр
+
+print(SHOW, end='')              # возвращаем курсор
+
+input('\nEnter - дальше')
+os.system(CLEAR)
+
+# ---------- 4. Диаграмма по sequence.txt ----------
+file = open('sequence.txt', 'r')
+numbers = []
+for number in file:
+    numbers.append(float(number))
+file.close()
+
+inside = 0                        # числа от -3 до 3
+for n in numbers:
+    if -3 <= n <= 3:
+        inside += 1
+outside = len(numbers) - inside   # остальные
+
+percent_in = inside / len(numbers) * 100
+percent_out = 100 - percent_in    # вместе ровно 100%
+
+length = 50
+n_in = round(length * percent_in / 100)
+print(f'{GREEN}{" " * n_in}{RED}{" " * (length - n_in)}{END}')
+print(f'{GREEN}  {END} от -3 до 3: {inside} шт. ({percent_in:.1f}%)')
+print(f'{RED}  {END} остальные: {outside} шт. ({percent_out:.1f}%)')
